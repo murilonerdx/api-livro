@@ -2,8 +2,11 @@ package com.murilonerdx.apilivro.controller;
 
 import com.murilonerdx.apilivro.dto.BookDTO;
 import java.awt.print.Book;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -11,12 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookController {
 
   @PostMapping
-  public BookDTO create() {
-    BookDTO dto = new BookDTO();
-    dto.setAuthor("Murilo");
-    dto.setId(1L);
-    dto.setTitle("Meu livro");
-    dto.setIsbn("123456");
+  @ResponseStatus(HttpStatus.CREATED)
+  public BookDTO create(@RequestBody BookDTO dto) {
     return dto;
   }
 }
