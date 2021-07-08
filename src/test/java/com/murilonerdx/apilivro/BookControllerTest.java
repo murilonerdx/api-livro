@@ -40,8 +40,8 @@ public class BookControllerTest {
   @Test
   @DisplayName("Deve criar um livro com sucesso.")
   public void createBookTest() throws Exception {
-    Book build = Book.builder().author("Murilo").title("Meu livro").isbn("1234").build();
-    BookDTO dto = BookDTO.builder().author("Murilo").title("Meu livro").isbn("1234").build();
+    Book build = Book.builder().id(1L).author("Murilo").title("Meu livro").isbn("12345").build();
+    BookDTO dto = BookDTO.builder().id(1L).author("Murilo").title("Meu livro").isbn("12345").build();
     BDDMockito.given(service.save(Mockito.any(Book.class))).willReturn(build);
     String json = new ObjectMapper().writeValueAsString(dto);
 
@@ -54,7 +54,7 @@ public class BookControllerTest {
 
     mvc.perform(request)
         .andExpect(MockMvcResultMatchers.status().isCreated())
-        .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
+        .andExpect(MockMvcResultMatchers.jsonPath("id").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("title").value("Meu livro"))
         .andExpect(MockMvcResultMatchers.jsonPath("author").value("Murilo"))
         .andExpect(MockMvcResultMatchers.jsonPath("isbn").value("12345"));
