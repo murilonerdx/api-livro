@@ -1,9 +1,10 @@
-package com.murilonerdx.apilivro;
+package com.murilonerdx.apilivro.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.murilonerdx.apilivro.dto.BookDTO;
 import com.murilonerdx.apilivro.entity.Book;
+import com.murilonerdx.apilivro.impl.BookServiceImpl;
 import com.murilonerdx.apilivro.service.BookService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ public class BookControllerTest {
   MockMvc mvc;
 
   @MockBean
-  BookService service;
+  BookServiceImpl service;
 
 
   @Test
