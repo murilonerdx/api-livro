@@ -18,23 +18,24 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-@WebMvcTest
-@AutoConfigureMockMvc
-public class BookService {
+@ExtendWith(SpringExtension.class)
+public class BookServiceTest {
 
-
-  @MockBean
-  BookServiceImpl service;
+  BookService service;
 
   @MockBean
   BookRepository repository;
 
 
+  @BeforeEach
+  public void setUp() {
+    this.service = new BookServiceImpl(repository);
+  }
+
   @Test
   @DisplayName("Deve salvar um livro")
-  public void saveBookTest(){
+  public void saveBookTest() {
     //Cenario
     Book book = Book.builder().author("Murilo").title("Meu livro").isbn("12345").build();
     Mockito.when(repository.save(book))
