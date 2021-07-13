@@ -3,14 +3,13 @@ package com.murilonerdx.apilivro.controller;
 import com.murilonerdx.apilivro.dto.BookDTO;
 import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.exceptions.ApiErrors;
+import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.service.BookService;
-import java.util.List;
 import javax.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,4 +47,18 @@ public class BookController {
     BindingResult bindingResult = e.getBindingResult();
     return new ApiErrors(bindingResult);
   }
+
+  @ExceptionHandler(BusinessException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ApiErrors handleBusinessException(BusinessException e){
+    return new ApiErrors(e);
+  }
+
+  @ExceptionHandler(IllegalArgumentException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ApiErrors handleCannotBeNull(IllegalArgumentException e){
+    return new ApiErrors(e);
+  }
+
+
 }

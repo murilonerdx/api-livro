@@ -1,20 +1,18 @@
 package com.murilonerdx.apilivro.dto;
 
 import com.sun.istack.NotNull;
+import java.io.Serializable;
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Builder
-public class BookDTO {
+public class BookDTO implements Serializable {
   private Long id;
   @NotEmpty
   private String title;
