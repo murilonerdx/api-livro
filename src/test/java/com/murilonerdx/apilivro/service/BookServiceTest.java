@@ -3,8 +3,10 @@ package com.murilonerdx.apilivro.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.murilonerdx.apilivro.entity.Book;
+import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.impl.BookServiceImpl;
 import com.murilonerdx.apilivro.repository.BookRepository;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +39,7 @@ public class BookServiceTest {
   @DisplayName("Deve salvar um livro")
   public void saveBookTest() {
     //Cenario
-    Book book = Book.builder().author("Murilo").title("Meu livro").isbn("12345").build();
+    Book book = createNewBook();
     Mockito.when(repository.save(book))
         .thenReturn(Book.builder()
             .id(1L).isbn("12345")
@@ -54,5 +56,25 @@ public class BookServiceTest {
 
   }
 
+  private Book createNewBook() {
+    return Book.builder().author("Murilo").title("Meu livro").isbn("12345").build();
+  }
+
+  @Test
+  @DisplayName("Deve lançar erro de negocio ao tentar salvar um livro com isbn duplicado")
+  public void shoudNotSaveABookWithDuplicatedISBN(){
+    //cenario
+    Book book = createNewBook();
+    Mockito.when(repository.existsByIsbn(Mockito.anyString())).thenReturn(true);
+    //execucao
+    Throwable exception = Assertions.catchThrowable(()-> service.save(book));
+
+    //verificacao
+    assertThat(exception)
+        .isInstanceOf(BusinessException.class)
+        .hasMessage("Isbn já cadastrado.");
+
+    Mockito.verify(repository, Mockito.never()).save(book);
+  }
 
 }
