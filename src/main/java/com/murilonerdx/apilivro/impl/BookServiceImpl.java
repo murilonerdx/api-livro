@@ -4,6 +4,7 @@ import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.repository.BookRepository;
 import com.murilonerdx.apilivro.service.BookService;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +30,10 @@ public class BookServiceImpl implements BookService {
       throw new BusinessException("Isbn já cadastrado.");
     }
     return repository.save(entity);
+  }
+
+  @Override
+  public Optional<Book> getById(Long id) {
+    return repository.findById(id);
   }
 }

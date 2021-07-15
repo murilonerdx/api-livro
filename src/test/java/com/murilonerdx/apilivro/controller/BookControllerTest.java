@@ -10,6 +10,7 @@ import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.impl.BookServiceImpl;
 import com.murilonerdx.apilivro.service.BookService;
+import java.util.Optional;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -106,6 +107,26 @@ public class BookControllerTest {
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("errors", Matchers.hasSize(1)))
         .andExpect(jsonPath("errors[0]").value(mensagemDeErro));
+
+  }
+
+  @Test
+  @DisplayName("Deve obter infomação de um livro.")
+  public void getBookDetailsTest() throws Exception {
+    Long id = 1L;
+    Book book = Book.builder().id(id).author("Murilo").isbn("12345").title("Meu livro").build();
+    BDDMockito.given(service.getById(id)).willReturn(Optional.of(book));
+
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+        .get(BOOK_API.concat("/"+id))
+        .accept(MediaType.APPLICATION_JSON);
+
+    mvc.perform(request)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("id").value(1L))
+        .andExpect(jsonPath("title").value("Meu livro"))
+        .andExpect(jsonPath("author").value("Murilo"))
+        .andExpect(jsonPath("isbn").value("12345"));
 
   }
 }
