@@ -36,4 +36,7 @@ public class BookRepositoryTest {
     //verificacao
     assertThat(existsByIsbn).isTrue();
   }
+
+
+
 }
