@@ -55,7 +55,7 @@ public class BookController {
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public BookDTO updateBook(@RequestBody BookDTO book, @PathVariable Long id) {
+  public BookDTO updateBook(@PathVariable Long id, @RequestBody BookDTO book) {
     return modelMapper.map(service.updateById(id, book), BookDTO.class);
   }
 

@@ -9,4 +9,5 @@ public interface BookService {
  Optional<Book> getById(Long id);
  void deleteBook(Long id);
  Book updateById(Long id, BookDTO book);
+ Book update(Book book);
 }

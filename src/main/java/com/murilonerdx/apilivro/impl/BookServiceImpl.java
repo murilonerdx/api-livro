@@ -7,7 +7,9 @@ import com.murilonerdx.apilivro.repository.BookRepository;
 import com.murilonerdx.apilivro.service.BookService;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * BookServiceImpl
@@ -45,14 +47,17 @@ public class BookServiceImpl implements BookService {
 
   @Override
   public Book updateById(Long id, BookDTO obj) {
-    Book book = getById(id).orElseThrow(() -> new RuntimeException("ID não existe"));
-    return updateData(book, obj);
+    Book book = getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    return repository.save(updateData(book, obj));
   }
 
+  @Override
+  public Book update(Book book) {
+    return repository.save(book);
+  }
 
   public Book updateData(Book entity, BookDTO obj){
     entity.setAuthor(obj.getAuthor());
-    entity.setIsbn(obj.getIsbn());
     entity.setTitle(obj.getTitle());
     return entity;
   }
