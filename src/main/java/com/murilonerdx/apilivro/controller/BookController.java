@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -47,32 +48,39 @@ public class BookController {
 
   @GetMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public BookDTO getBook(@PathVariable Long id){
-    return service.getById(id).map(x->modelMapper.map(x, BookDTO.class)).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND));
+  public BookDTO getBook(@PathVariable Long id) {
+    return service.getById(id).map(x -> modelMapper.map(x, BookDTO.class))
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+  }
+
+  @PutMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public BookDTO updateBook(@RequestBody BookDTO book, @PathVariable Long id) {
+    return modelMapper.map(service.updateById(id, book), BookDTO.class);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteBook(@PathVariable Long id){
+  public void deleteBook(@PathVariable Long id) {
     service.deleteBook(id);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ApiErrors handleValidationExceptions(MethodArgumentNotValidException e){
+  public ApiErrors handleValidationExceptions(MethodArgumentNotValidException e) {
     BindingResult bindingResult = e.getBindingResult();
     return new ApiErrors(bindingResult);
   }
 
   @ExceptionHandler(BusinessException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ApiErrors handleBusinessException(BusinessException e){
+  public ApiErrors handleBusinessException(BusinessException e) {
     return new ApiErrors(e);
   }
 
   @ExceptionHandler(IllegalArgumentException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ApiErrors handleCannotBeNull(IllegalArgumentException e){
+  public ApiErrors handleCannotBeNull(IllegalArgumentException e) {
     return new ApiErrors(e);
   }
 

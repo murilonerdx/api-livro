@@ -1,5 +1,6 @@
 package com.murilonerdx.apilivro.impl;
 
+import com.murilonerdx.apilivro.dto.BookDTO;
 import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.repository.BookRepository;
@@ -40,5 +41,19 @@ public class BookServiceImpl implements BookService {
   @Override
   public void deleteBook(Long id) {
     repository.deleteById(id);
+  }
+
+  @Override
+  public Book updateById(Long id, BookDTO obj) {
+    Book book = getById(id).orElseThrow(() -> new RuntimeException("ID não existe"));
+    return updateData(book, obj);
+  }
+
+
+  public Book updateData(Book entity, BookDTO obj){
+    entity.setAuthor(obj.getAuthor());
+    entity.setIsbn(obj.getIsbn());
+    entity.setTitle(obj.getTitle());
+    return entity;
   }
 }
