@@ -46,12 +46,6 @@ public class BookServiceImpl implements BookService {
   }
 
   @Override
-  public Book updateById(Long id, BookDTO obj) {
-    Book book = getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    return repository.save(updateData(book, obj));
-  }
-
-  @Override
   public Book update(Book book) {
     return repository.save(book);
   }

@@ -6,6 +6,7 @@ import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.impl.BookServiceImpl;
 import com.murilonerdx.apilivro.repository.BookRepository;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,12 +63,12 @@ public class BookServiceTest {
 
   @Test
   @DisplayName("Deve lançar erro de negocio ao tentar salvar um livro com isbn duplicado")
-  public void shoudNotSaveABookWithDuplicatedISBN(){
+  public void shoudNotSaveABookWithDuplicatedISBN() {
     //cenario
     Book book = createNewBook();
     Mockito.when(repository.existsByIsbn(Mockito.anyString())).thenReturn(true);
     //execucao
-    Throwable exception = Assertions.catchThrowable(()-> service.save(book));
+    Throwable exception = Assertions.catchThrowable(() -> service.save(book));
 
     //verificacao
     assertThat(exception)
@@ -75,6 +76,36 @@ public class BookServiceTest {
         .hasMessage("Isbn já cadastrado.");
 
     Mockito.verify(repository, Mockito.never()).save(book);
+  }
+
+  @Test
+  @DisplayName("Deve obter um livro por Id")
+  public void getByIdTest() {
+    Long id = 1L;
+    Book book = createNewBook();
+    book.setId(id);
+    Mockito.when(repository.findById(id)).thenReturn(Optional.of(book));
+    Optional<Book> foundBook = service.getById(id);
+
+    assertThat(foundBook.isPresent()).isTrue();
+    assertThat(foundBook.get().getId()).isEqualTo(id);
+    assertThat(foundBook.get().getAuthor()).isEqualTo(book.getAuthor());
+    assertThat(foundBook.get().getIsbn()).isEqualTo(book.getIsbn());
+    assertThat(foundBook.get().getTitle()).isEqualTo(book.getTitle());
+
+  }
+
+  @Test
+  @DisplayName("Deve retornar vazio ao obter um livro pod Id quando ele não existir")
+  public void bookNotFoundGetByIdTest() {
+    Long id = 1L;
+
+    Mockito.when(repository.findById(id)).thenReturn(Optional.empty());
+    Optional<Book> book = service.getById(id);
+
+    assertThat(book.isPresent()).isFalse();
+
+
   }
 
 }

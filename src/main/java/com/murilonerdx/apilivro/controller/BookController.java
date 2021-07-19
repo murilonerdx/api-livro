@@ -63,6 +63,13 @@ public class BookController {
     return modelMapper.map(bookUpdated, BookDTO.class);
   }
 
+  @GetMapping("/{id}")
+  public BookDTO getById(@PathVariable Long id){
+    Book obj = service.getById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    return modelMapper.map(obj, BookDTO.class);
+  }
+
+
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteBook(@PathVariable Long id) {
