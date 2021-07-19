@@ -1,6 +1,7 @@
 package com.murilonerdx.apilivro.repository;
 
 import com.murilonerdx.apilivro.entity.Book;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +28,7 @@ public class BookRepositoryTest {
   public void returnTrueWhenIsbnExists(){
     //cenario
     String isbn = "12345";
-    Book book = Book.builder().title("Meu livro").isbn(isbn).author("Murilo").build();
+    Book book = createNewBook(isbn);
     entityManager.persist(book);
 
     //execucao
@@ -35,6 +36,24 @@ public class BookRepositoryTest {
 
     //verificacao
     assertThat(existsByIsbn).isTrue();
+  }
+
+  private Book createNewBook(String isbn) {
+    return Book.builder().title("Meu livro").isbn(isbn).author("Murilo").build();
+  }
+
+  @Test
+  @DisplayName("Deve obter um livro por id")
+  public void findByIdTest(){
+    //cenario
+    Book book = createNewBook("123");
+    entityManager.persist(book);
+
+    //execucao
+    Optional<Book> foundBook = repository.findById(book.getId());
+
+    //verificacao
+    assertThat(foundBook.isPresent()).isTrue();
   }
 
 

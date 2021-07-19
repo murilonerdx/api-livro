@@ -4,12 +4,10 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.murilonerdx.apilivro.dto.BookDTO;
 import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
-import com.murilonerdx.apilivro.impl.BookServiceImpl;
 import com.murilonerdx.apilivro.service.BookService;
 import java.util.Optional;
 import org.hamcrest.Matchers;
