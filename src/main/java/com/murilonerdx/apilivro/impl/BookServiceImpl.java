@@ -40,18 +40,19 @@ public class BookServiceImpl implements BookService {
   }
 
   @Override
-  public void deleteBook(Long id) {
-    repository.deleteById(id);
+  public void delete(Book book) {
+    if(book.getId() == null){
+      throw new IllegalArgumentException("Book id cant be null");
+    }
+    repository.delete(book);
   }
 
   @Override
   public Book update(Book book) {
+    if(book.getId() == null){
+      throw new IllegalArgumentException("Book id cant be null");
+    }
     return repository.save(book);
   }
 
-  public Book updateData(Book entity, BookDTO obj){
-    entity.setAuthor(obj.getAuthor());
-    entity.setTitle(obj.getTitle());
-    return entity;
-  }
 }
