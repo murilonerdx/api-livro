@@ -6,6 +6,9 @@ import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.impl.BookServiceImpl;
 import com.murilonerdx.apilivro.repository.BookRepository;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +18,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -121,6 +128,25 @@ public class BookServiceTest {
 
     org.junit.jupiter.api.Assertions.assertThrows(IllegalArgumentException.class, ()->service.delete(book));
     Mockito.verify(repository, Mockito.never()).delete(book);
+  }
+
+  @Test
+  @DisplayName("Deve filtrar livros pelas propriedades")
+  public void findBookTest(){
+    Book book = createNewBook();
+    List<Book> lista = Collections.singletonList(book);
+    PageRequest pageRequest = PageRequest.of(0,10);
+    Page<Book> page = new PageImpl<Book>(Collections.singletonList(book), pageRequest, 1);
+    Mockito.when(repository.findAll(Mockito.any(Example.class), Mockito.any(PageRequest.class))).thenReturn(page);
+
+    Page<Book> results = service.find(book, pageRequest);
+
+    assertThat(results.getTotalElements()).isEqualTo(1);
+    assertThat(results.getContent()).isEqualTo(lista);
+    assertThat(results.getPageable().getPageNumber()).isEqualTo(0);
+    assertThat(results.getPageable().getPageSize()).isEqualTo(10);
+
+
   }
 
 }
