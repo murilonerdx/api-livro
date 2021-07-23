@@ -53,7 +53,7 @@ public class BookController {
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public BookDTO updateBook(@PathVariable Long id, @RequestBody BookDTO book) {
+  public BookDTO update(@PathVariable Long id, @RequestBody BookDTO book) {
     Book obj = service.getById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     obj.setAuthor(book.getAuthor());
@@ -72,14 +72,14 @@ public class BookController {
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteBook(@PathVariable Long id) {
+  public void delete(@PathVariable Long id) {
     Book obj = service.getById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     service.delete(obj);
   }
 
   @GetMapping()
-  public Page<BookDTO> findBook(BookDTO dto, Pageable page) {
+  public Page<BookDTO> find(BookDTO dto, Pageable page) {
     Book filter = modelMapper.map(dto, Book.class);
     Page<Book> result = service.find(filter, page);
     List<BookDTO> listResult = result.getContent()
