@@ -7,6 +7,11 @@ import com.murilonerdx.apilivro.repository.BookRepository;
 import com.murilonerdx.apilivro.service.BookService;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.ExampleMatcher.StringMatcher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +58,15 @@ public class BookServiceImpl implements BookService {
       throw new IllegalArgumentException("Book id cant be null");
     }
     return repository.save(book);
+  }
+
+  @Override
+  public Page<Book> find(Book filter, Pageable pageRequest) {
+    Example<Book> example = Example.of(filter, ExampleMatcher
+        .matching()
+        .withIgnoreCase().withIgnoreNullValues()
+    .withStringMatcher(StringMatcher.ENDING));
+    return repository.findAll(example, pageRequest);
   }
 
 }

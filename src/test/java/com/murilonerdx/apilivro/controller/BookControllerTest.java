@@ -9,6 +9,8 @@ import com.murilonerdx.apilivro.dto.BookDTO;
 import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.service.BookService;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -123,7 +128,7 @@ public class BookControllerTest {
     BDDMockito.given(service.getById(id)).willReturn(Optional.of(book));
 
     MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-        .get(BOOK_API.concat("/"+id))
+        .get(BOOK_API.concat("/" + id))
         .accept(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
@@ -141,7 +146,7 @@ public class BookControllerTest {
     BDDMockito.given(service.getById(anyLong())).willReturn(Optional.empty());
 
     MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-        .get(BOOK_API.concat("/"+1))
+        .get(BOOK_API.concat("/" + 1))
         .accept(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
@@ -151,9 +156,10 @@ public class BookControllerTest {
   @Test
   @DisplayName("Deletar um livro")
   public void deleteBookTest() throws Exception {
-    BDDMockito.given(service.getById(anyLong())).willReturn(Optional.of(Book.builder().id(1L).build()));
+    BDDMockito.given(service.getById(anyLong()))
+        .willReturn(Optional.of(Book.builder().id(1L).build()));
     MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-        .delete(BOOK_API.concat("/"+1))
+        .delete(BOOK_API.concat("/" + 1))
         .accept(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
@@ -166,18 +172,19 @@ public class BookControllerTest {
     Long id = 1L;
     String json = new ObjectMapper().writeValueAsString(createBookDTO());
 
-    Book updatingBook = Book.builder().id(id).title("Outro titulo").author("Outro autor").isbn("12345").build();
+    Book updatingBook = Book.builder().id(id).title("Outro titulo").author("Outro autor")
+        .isbn("12345").build();
 
     BDDMockito.given(service.getById(id)).willReturn(Optional.of(updatingBook));
-    Book updatedBook = Book.builder().id(id).title("Meu livro").author("Murilo").isbn("12345").build();
+    Book updatedBook = Book.builder().id(id).title("Meu livro").author("Murilo").isbn("12345")
+        .build();
     BDDMockito.given(service.update(updatingBook)).willReturn(updatedBook);
 
     MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-        .put(BOOK_API.concat("/"+1))
+        .put(BOOK_API.concat("/" + 1))
         .content(json)
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
-
 
     mvc.perform(request)
         .andExpect(status().isOk())
@@ -195,13 +202,40 @@ public class BookControllerTest {
     BDDMockito.given(service.getById(anyLong())).willReturn(Optional.empty());
 
     MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-        .put(BOOK_API.concat("/"+1))
+        .put(BOOK_API.concat("/" + 1))
         .content(json)
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON);
 
     mvc.perform(request)
         .andExpect(status().isNotFound());
+  }
+
+  @Test
+  @DisplayName("Deve filtrar livros")
+  public void findBookTest() throws Exception {
+    Long id = 1L;
+    Book book = Book.builder()
+        .id(id)
+        .title(createNewBook().getTitle())
+        .author(createBookDTO().getAuthor())
+        .isbn(createBookDTO().getIsbn())
+        .build();
+
+    BDDMockito.given(service.find(Mockito.any(Book.class), Mockito.any(Pageable.class)))
+        .willReturn(new PageImpl<Book>(Collections.singletonList(book), PageRequest.of(0, 100), 1));
+    String queryString = String
+        .format("?title=%s&author=%s&page=0&size=100", book.getTitle(), book.getAuthor());
+
+    MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(BOOK_API.concat(queryString))
+        .accept(MediaType.APPLICATION_JSON);
+
+    mvc.perform(request)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("content", Matchers.hasSize(1)))
+        .andExpect(jsonPath("totalElements").value(1))
+        .andExpect(jsonPath("pageable.pageSize").value(100))
+        .andExpect(jsonPath("pageable.pageNumber").value(0));
   }
 
 

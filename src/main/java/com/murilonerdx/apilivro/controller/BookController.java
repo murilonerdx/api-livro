@@ -5,9 +5,14 @@ import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.exceptions.ApiErrors;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.service.BookService;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -71,6 +76,17 @@ public class BookController {
     Book obj = service.getById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     service.delete(obj);
+  }
+
+  @GetMapping()
+  public Page<BookDTO> findBook(BookDTO dto, Pageable page) {
+    Book filter = modelMapper.map(dto, Book.class);
+    Page<Book> result = service.find(filter, page);
+    List<BookDTO> listResult = result.getContent()
+        .stream()
+        .map(entity -> modelMapper.map(entity, BookDTO.class))
+        .collect(Collectors.toList());
+    return new PageImpl<BookDTO>(listResult, page, result.getTotalElements());
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
