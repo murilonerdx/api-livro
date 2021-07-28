@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.server.ResponseStatusException;
 
 public class ApiErrors {
   private List<String> errors;
@@ -20,6 +21,10 @@ public class ApiErrors {
 
   public ApiErrors(IllegalArgumentException e) {
     this.errors = (Collections.singletonList(e.getMessage()));
+  }
+
+  public ApiErrors(ResponseStatusException e) {
+    this.errors = Collections.singletonList(e.getReason());
   }
 
   public List<String> getErrors() {
