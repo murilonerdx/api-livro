@@ -1,10 +1,14 @@
 package com.murilonerdx.apilivro.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.entity.Loan;
+import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.impl.LoanServiceImpl;
 import com.murilonerdx.apilivro.repository.LoanRepository;
 import java.time.LocalDate;
@@ -26,13 +30,13 @@ public class LoanServiceTest {
   LoanRepository repository;
 
   @BeforeEach
-  public void setUp(){
+  public void setUp() {
     this.service = new LoanServiceImpl(repository);
   }
 
   @Test
   @DisplayName("Deve salvar um empréstimo")
-  public void saveLoanTest(){
+  public void saveLoanTest() {
     String customer = "Murilo";
     Book book = Book.builder()
         .id(1L)
@@ -62,4 +66,28 @@ public class LoanServiceTest {
     assertThat(loan.getLoanDate()).isEqualTo(savedLoan.getLoanDate());
   }
 
+  @Test
+  @DisplayName("Deve lançar erro de negócio ao salvar um emprestimo com livro já empresado")
+  public void loanedBookSaveTest() {
+    String customer = "Murilo";
+    Book book = Book.builder()
+        .id(1L)
+        .author(customer)
+        .title("Meu livro")
+        .isbn("12345")
+        .build();
+
+    Loan savingLoan = Loan.builder()
+        .book(book)
+        .customer(customer)
+        .loanDate(LocalDate.now())
+        .build();
+
+    when(repository.existsByBookAndNotReturn(book)).thenReturn(true);
+
+    Throwable exception = catchThrowable(() -> service.save(savingLoan));
+    assertThat(exception).isInstanceOf(BusinessException.class).hasMessage("Book already loaned");
+
+    verify(repository, never()).save(savingLoan);
+  }
 }
