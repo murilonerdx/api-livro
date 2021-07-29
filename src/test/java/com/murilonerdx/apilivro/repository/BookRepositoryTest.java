@@ -38,7 +38,7 @@ public class BookRepositoryTest {
     assertThat(existsByIsbn).isTrue();
   }
 
-  private Book createNewBook(String isbn) {
+  protected static Book createNewBook(String isbn) {
     return Book.builder().title("Meu livro").isbn(isbn).author("Murilo").build();
   }
 
