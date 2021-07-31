@@ -1,5 +1,6 @@
 package com.murilonerdx.apilivro.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -7,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.murilonerdx.apilivro.dto.LoanDTO;
+import com.murilonerdx.apilivro.dto.ReturnedLoanDTO;
 import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.entity.Loan;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
@@ -114,6 +116,23 @@ public class LoanControllerTest {
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("errors", Matchers.hasSize(1)))
         .andExpect(jsonPath("errors[0]").value("Book already loaned"));
+  }
+
+  @Test
+  @DisplayName("Deve retornar um livro")
+  public void returnBookTest() throws Exception {
+    //cenario
+    ReturnedLoanDTO dto = ReturnedLoanDTO.builder().returned(true).build();
+    BDDMockito.given(loanService.getById(Mockito.anyLong())).willReturn(Optional.of(Loan.builder().id(1L).build()));
+    String json = new ObjectMapper().writeValueAsString(dto);
+
+    mvc.perform(
+        patch(LOAN_API.concat("/1"))
+        .accept(MediaType.APPLICATION_JSON)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(json)
+    ).andExpect(status().isOk());
+
   }
 
 }
