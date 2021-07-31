@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.murilonerdx.apilivro.entity.Book;
+import com.murilonerdx.apilivro.entity.Loan;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.impl.BookServiceImpl;
 import com.murilonerdx.apilivro.repository.BookRepository;
@@ -165,4 +166,6 @@ public class BookServiceTest {
 
     verify(repository, times(1)).findByIsbn(isbn);
   }
+
+
 }

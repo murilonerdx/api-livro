@@ -12,6 +12,7 @@ import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.impl.LoanServiceImpl;
 import com.murilonerdx.apilivro.repository.LoanRepository;
 import java.time.LocalDate;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -89,5 +90,36 @@ public class LoanServiceTest {
     assertThat(exception).isInstanceOf(BusinessException.class).hasMessage("Book already loaned");
 
     verify(repository, never()).save(savingLoan);
+  }
+
+  @Test
+  @DisplayName("Deve obter as informações de um emprestimo pelo id")
+  public void getLoanDetailsTest(){
+    //cenario
+    Long id = 1L;
+    Loan loan = createLoan();
+    loan.setId(id);
+
+    //execucao
+    when(repository.findById(id)).thenReturn(Optional.of(loan));
+    Optional<Loan> result = service.getById(id);
+
+    //verificacao
+    assertThat(result.isPresent()).isTrue();
+    assertThat(result.get().getId()).isEqualTo(id);
+    assertThat(result.get().getCustomer()).isEqualTo(loan.getCustomer());
+    assertThat(result.get().getBook()).isEqualTo(loan.getBook());
+    assertThat(result.get().getLoanDate()).isEqualTo(loan.getLoanDate());
+  }
+
+  public Loan createLoan(){
+    Book book = Book.builder().id(1L).build();
+    String customer = "Murilo";
+
+    return Loan.builder()
+        .book(book)
+        .loanDate(LocalDate.now())
+        .customer(customer)
+        .book(book).build();
   }
 }
