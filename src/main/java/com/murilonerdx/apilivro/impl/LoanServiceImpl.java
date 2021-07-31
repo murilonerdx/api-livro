@@ -30,10 +30,10 @@ public class LoanServiceImpl implements LoanService {
   }
 
   @Override
-  public void update(Loan loan) {
+  public Loan update(Loan loan) {
     if(loan.getId() == null){
       throw new BusinessException("Book id cant be null");
     }
-    repository.save(loan);
+    return repository.save(loan);
   }
 }

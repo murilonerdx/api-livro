@@ -112,6 +112,22 @@ public class LoanServiceTest {
     assertThat(result.get().getLoanDate()).isEqualTo(loan.getLoanDate());
   }
 
+  @Test
+  @DisplayName("Deve atualizar um emprestimo")
+  public void updateLoanTest(){
+    Long id = 1L;
+    Loan loan = createLoan();
+    loan.setId(id);
+    loan.setReturned(true);
+
+    when(repository.save(loan)).thenReturn(loan);
+
+    Loan updatedLoan = service.update(loan);
+
+    assertThat(updatedLoan.getReturned()).isTrue();
+    verify(repository).save(loan);
+  }
+
   public Loan createLoan(){
     Book book = Book.builder().id(1L).build();
     String customer = "Murilo";
