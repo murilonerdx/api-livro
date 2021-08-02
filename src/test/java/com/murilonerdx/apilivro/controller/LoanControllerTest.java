@@ -126,7 +126,7 @@ public class LoanControllerTest {
 
   @Test
   @DisplayName("Deve retornar um livro")
-  public void returnBookTest() throws Exception {
+  public void returnLoanTest() throws Exception {
     //cenario
     ReturnedLoanDTO dto = ReturnedLoanDTO.builder().returned(true).build();
     BDDMockito.given(service.getById(Mockito.anyLong())).willReturn(Optional.of(Loan.builder().id(1L).build()));

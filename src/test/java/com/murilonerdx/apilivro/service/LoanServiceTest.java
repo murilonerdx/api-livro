@@ -6,18 +6,26 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.murilonerdx.apilivro.dto.LoanFilterDTO;
 import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.entity.Loan;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.impl.LoanServiceImpl;
 import com.murilonerdx.apilivro.repository.LoanRepository;
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -94,7 +102,7 @@ public class LoanServiceTest {
 
   @Test
   @DisplayName("Deve obter as informações de um emprestimo pelo id")
-  public void getLoanDetailsTest(){
+  public void getLoanDetailsTest() {
     //cenario
     Long id = 1L;
     Loan loan = createLoan();
@@ -114,7 +122,7 @@ public class LoanServiceTest {
 
   @Test
   @DisplayName("Deve atualizar um emprestimo")
-  public void updateLoanTest(){
+  public void updateLoanTest() {
     Long id = 1L;
     Loan loan = createLoan();
     loan.setId(id);
@@ -128,7 +136,7 @@ public class LoanServiceTest {
     verify(repository).save(loan);
   }
 
-  public static Loan createLoan(){
+  public static Loan createLoan() {
     Book book = Book.builder().id(1L).build();
     String customer = "Murilo";
 
@@ -137,5 +145,30 @@ public class LoanServiceTest {
         .loanDate(LocalDate.now())
         .customer(customer)
         .book(book).build();
+  }
+
+  @Test
+  @DisplayName("Deve filtrar emprestimo pelas propriedades")
+  public void findLoanTest() {
+
+    LoanFilterDTO loanFilterDTO = LoanFilterDTO.builder().customer("Murilo").isbn("12345").build();
+
+    Loan loan = createLoan();
+    loan.setId(1L);
+
+    List<Loan> lista = Collections.singletonList(loan);
+    PageRequest pageRequest = PageRequest.of(0, 10);
+    Page<Loan> page = new PageImpl<Loan>(Collections.singletonList(loan), pageRequest, 1);
+    when(repository.findByBookIsbnOrCustomer(Mockito.anyString(), Mockito.anyString(),
+        Mockito.any(PageRequest.class))).thenReturn(page);
+
+    Page<Loan> results = service.find(loanFilterDTO, pageRequest);
+
+    assertThat(results.getTotalElements()).isEqualTo(1);
+    assertThat(results.getContent()).isEqualTo(lista);
+    assertThat(results.getPageable().getPageNumber()).isEqualTo(0);
+    assertThat(results.getPageable().getPageSize()).isEqualTo(10);
+
+
   }
 }
