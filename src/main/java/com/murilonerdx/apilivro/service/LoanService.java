@@ -12,4 +12,5 @@ public interface LoanService {
     Optional<Loan> getById(Long id);
     Loan update(Loan loan);
     Page<Loan> find(LoanFilterDTO any, Pageable any1);
+    Page<Loan> getLoansByBook(Book book, Pageable any1);
 }

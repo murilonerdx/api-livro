@@ -1,10 +1,13 @@
 package com.murilonerdx.apilivro.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,6 +33,8 @@ public class Book implements Serializable {
   private String title;
   private String author;
   private String isbn;
+  @OneToMany(mappedBy="book", fetch = FetchType.LAZY)
+  private List<Loan> loans;
 
 }
 
