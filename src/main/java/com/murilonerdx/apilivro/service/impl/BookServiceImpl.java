@@ -1,6 +1,5 @@
-package com.murilonerdx.apilivro.impl;
+package com.murilonerdx.apilivro.service.impl;
 
-import com.murilonerdx.apilivro.dto.BookDTO;
 import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.repository.BookRepository;
@@ -12,7 +11,6 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 /**

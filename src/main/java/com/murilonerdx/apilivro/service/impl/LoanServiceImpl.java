@@ -1,4 +1,4 @@
-package com.murilonerdx.apilivro.impl;
+package com.murilonerdx.apilivro.service.impl;
 
 import com.murilonerdx.apilivro.dto.LoanFilterDTO;
 import com.murilonerdx.apilivro.entity.Book;
@@ -10,9 +10,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

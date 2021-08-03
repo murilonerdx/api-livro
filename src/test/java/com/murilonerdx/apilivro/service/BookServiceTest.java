@@ -6,11 +6,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.murilonerdx.apilivro.entity.Book;
-import com.murilonerdx.apilivro.entity.Loan;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
-import com.murilonerdx.apilivro.impl.BookServiceImpl;
+import com.murilonerdx.apilivro.service.impl.BookServiceImpl;
 import com.murilonerdx.apilivro.repository.BookRepository;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
