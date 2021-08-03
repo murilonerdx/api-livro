@@ -6,6 +6,8 @@ import com.murilonerdx.apilivro.entity.Loan;
 import com.murilonerdx.apilivro.exceptions.BusinessException;
 import com.murilonerdx.apilivro.repository.LoanRepository;
 import com.murilonerdx.apilivro.service.LoanService;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -55,6 +57,13 @@ public class LoanServiceImpl implements LoanService {
   @Override
   public Page<Loan> getLoansByBook(Book book, Pageable any1) {
     return repository.findByBook(book, any1);
+  }
+
+  @Override
+  public List<Loan> getAllLateLoans() {
+    final Integer loanDays = 4;
+    LocalDate threeDaysAgo = LocalDate.now().minusDays(loanDays);
+    return repository.findByLoanDateLessThanNotReturned(threeDaysAgo);
   }
 
 

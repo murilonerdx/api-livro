@@ -2,6 +2,8 @@ package com.murilonerdx.apilivro.repository;
 
 import com.murilonerdx.apilivro.entity.Book;
 import com.murilonerdx.apilivro.entity.Loan;
+import java.time.LocalDate;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,4 +24,7 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
       @Param("customer") String customer, Pageable pageable);
 
   Page<Loan> findByBook(Book book, Pageable any1);
+
+  @Query("select l from Loan l where l.loanDate <= :threeDaysAgo and ( l.returned is null or l.returned is false)")
+  List<Loan> findByLoanDateLessThanNotReturned(@Param("threeDaysAgo") LocalDate threeDaysAgo);
 }
