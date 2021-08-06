@@ -11,6 +11,8 @@ import com.murilonerdx.apilivro.service.LoanService;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,7 @@ public class BookController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
+  @ApiOperation("Creates a book")
   public BookDTO create(@RequestBody @Valid BookDTO dto) {
 //    Book entity = Book.builder().author(dto.getAuthor()).title(dto.getTitle()).isbn(dto.getIsbn()).build();
     Book entity = modelMapper.map(dto, Book.class);
@@ -54,6 +57,7 @@ public class BookController {
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
+  @ApiOperation("Update a book")
   public BookDTO update(@PathVariable Long id, @RequestBody BookDTO book) {
     Book obj = service.getById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -64,6 +68,7 @@ public class BookController {
   }
 
   @GetMapping("/{id}")
+  @ApiOperation("Obtains a book details by id")
   public BookDTO getById(@PathVariable Long id) {
     Book obj = service.getById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -73,6 +78,7 @@ public class BookController {
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ApiOperation("Deletes a book")
   public void delete(@PathVariable Long id) {
     Book obj = service.getById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -80,6 +86,7 @@ public class BookController {
   }
 
   @GetMapping()
+  @ApiOperation("Find books by params")
   public Page<BookDTO> find(BookDTO dto, Pageable page) {
     Book filter = modelMapper.map(dto, Book.class);
     Page<Book> result = service.find(filter, page);
@@ -103,8 +110,6 @@ public class BookController {
     }).collect(Collectors.toList());
     return new PageImpl<LoanDTO>(list, pageable, result.getTotalElements());
   }
-
-
 
 
 }
