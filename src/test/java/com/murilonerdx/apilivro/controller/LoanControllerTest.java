@@ -56,6 +56,7 @@ public class LoanControllerTest {
   @MockBean
   private LoanService service;
 
+
   @Test
   @DisplayName("Deve realizar um emprestimo")
   public void createLoanTest() throws Exception {

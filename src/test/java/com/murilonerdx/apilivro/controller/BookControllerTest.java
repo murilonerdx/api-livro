@@ -12,6 +12,8 @@ import com.murilonerdx.apilivro.service.BookService;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
+
+import com.murilonerdx.apilivro.service.LoanService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,6 +50,9 @@ public class BookControllerTest {
 
   @MockBean
   BookService service;
+
+  @MockBean
+  LoanService loanService;
 
   @Test
   @DisplayName("Deve criar um livro com sucesso.")
