@@ -2,9 +2,9 @@ dist: trusty
 language: java
 sudo: true
 jdk: openjdk11
-after_success: codecov
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 install:
-  - pip install codecov
   - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 before_install:
   - chmod +x mvnw
