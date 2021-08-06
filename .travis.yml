@@ -1,4 +1,11 @@
+dist: xenial
 language: java
-jdk:
-  - oraclejdk11
-dist: trusty
+sudo: true
+jdk: openjdk11
+install:
+  - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+before_install:
+  - chmod +x mvnw
+cache:
+  directories:
+    - $HOME/.m2
